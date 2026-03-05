@@ -373,6 +373,7 @@ export default function DiffEngine() {
   const [diffResult, setDiffResult] = useState(null);
   const [computing, setComputing]   = useState(false);
   const [error, setError]           = useState(null);
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_ANTHROPIC_API_KEY || "");
   const [activeExample, setActiveExample] = useState(0);
   const [view, setView]             = useState("diff"); // diff | split
   const [expandedSections, setExpandedSections] = useState({
@@ -400,12 +401,12 @@ export default function DiffEngine() {
     setError(null);
 
     try {
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      const resp = await fetch("/anthropic/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 4096,
           system: SYSTEM_PROMPT,
           messages: [{
             role: "user",
@@ -509,9 +510,21 @@ Output ONLY the diff JSON object.`,
             </div>
           )}
 
+          <input
+            type="password"
+            value={apiKey}
+            onChange={e => setApiKey(e.target.value)}
+            placeholder="sk-ant-... (Anthropic API key)"
+            style={{
+              width: "100%", padding: "6px 10px", marginBottom: 8,
+              background: "rgba(0,0,0,0.3)", border: `1px solid ${C.border}`,
+              borderRadius: 4, fontSize: 10, color: C.bright,
+              fontFamily: "inherit", outline: "none",
+            }}
+          />
           <button
             onClick={computeDiff}
-            disabled={computing}
+            disabled={computing || !apiKey.trim()}
             style={{
               background: computing ? C.muted : "rgba(96,165,250,0.12)",
               border: `1px solid ${computing ? C.border : "#60a5fa40"}`,
