@@ -422,7 +422,7 @@ function ParamInput({ param, value, onChange }) {
         <Badge label={param.type} color={C.purple} />
         {param.required && <Badge label="required" color={C.orange} />}
       </div>
-      <div style={{ fontSize: 8, color: C.muted, marginBottom 4: true, marginBottom: 4 }}>
+      <div style={{ fontSize: 8, color: C.muted, marginBottom: 4 }}>
         {param.description}
       </div>
       <input
