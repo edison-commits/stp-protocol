@@ -276,12 +276,12 @@ export default function BlockGenerator() {
     setError(null);
 
     try {
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      const resp = await fetch("/anthropic/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-allow-browser": "true" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 2048,
           system: SYSTEM_PROMPT,
           messages: [{
             role: "user",
@@ -300,7 +300,7 @@ export default function BlockGenerator() {
       setResult(parsed);
       setTab("overview");
     } catch (e) {
-      setError(`Generation failed: ${e.message}. Check that the API key is available.`);
+      setError(`Generation failed: ${e.message}`);
     } finally {
       setGenerating(false);
     }
