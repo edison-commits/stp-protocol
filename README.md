@@ -46,24 +46,52 @@ Where HTML communicates *presentation* and JSON communicates *data*, STP communi
 
 | Layer | Status |
 |-------|--------|
-| Reading Layer | 🟡 In Progress |
-| Concept Registry | ✅ v1.0 (23 concepts, 6 domains) |
-| Confidence Propagation | ✅ Implemented |
-| Conflict Resolution | 🟡 In Progress |
-| Security Specification | 🔴 Required before Action Layer |
-| Action Layer | 📋 Planned |
-| Agent-to-Agent Protocol | 🔮 Future |
+| Reading Layer | ✅ Implemented |
+| Concept Registry | ✅ v1.0 (20 concepts, 6 domains) |
+| Confidence Propagation | ✅ Implemented (5-rule engine) |
+| Conflict Resolution | ✅ Implemented (5-criteria deterministic pipeline) |
+| Temporal Relationships | ✅ Implemented (confidence drift 2022–2026) |
+| Security Specification | ✅ Spec complete (8 threats, 9 mitigations) |
+| Validator | ✅ Implemented (schema + injection scan) |
+| Diff Engine | ✅ Implemented (semantic graph versioning) |
+| Block Generator | ✅ Implemented (content → STP in 30s) |
+| Action Layer | 🔴 Blocked — requires security spec Phase 0 |
+| Agent-to-Agent Protocol | ✅ Prototype (2.7× compression, zero NL overhead) |
+| W3C Standardization Track | 🔮 Future |
 
 ---
 
 ## Prototypes
 
-Interactive demos built in React:
+Interactive demos — 12 artifacts, all runnable in browser:
 
-| Demo | Description |
+| File | What It Does |
 |------|-------------|
-| `stp-conflict-resolution.jsx` | 5-criteria deterministic conflict resolution engine with 4 live test cases |
-| *(more coming)* | Reading layer, concept registry, confidence propagation, commerce action layer |
+| `stp-conflict-resolution.jsx` | 5-criteria deterministic conflict engine, 4 live test cases |
+| `stp-security-spec.jsx` | 8 threat classes, 9 mitigations, implementation roadmap |
+| `stp-action-layer.jsx` | 5-step security pipeline, direct API execution |
+| `stp-agent-to-agent.jsx` | Zero-NL agent messaging, 2.7× compression |
+| `stp-unified-demo.jsx` | All layers end-to-end, 3.6× compression |
+| `stp-crawler-simulator.jsx` | 112.5× compression, knowledge graph assembly |
+| `stp-benchmark.jsx` | 21.8× faster vs conventional browser automation (9.27s → 0.42s) |
+| `stp-generator.jsx` | Paste content → STP block in ~30 seconds |
+| `stp-diff-engine.jsx` | Semantic graph versioning — git for STP blocks |
+| `stp-validator.jsx` | Schema check, injection scan, registry compliance |
+| `stp-temporal-graph.jsx` | AI/ML knowledge graph animated Jan 2022–Mar 2026 |
+
+**Live demos:** [semanticweb.dev](https://semanticweb.dev)
+
+---
+
+## Concept Registry
+
+The canonical namespace for STP concept IDs lives in [`registry/`](registry/).
+
+Every STP block references concepts by stable ID: `stp:ai.ml.006`, `stp:ai.agents.004`, etc. The registry is what makes those IDs mean the same thing everywhere.
+
+**20 seed concepts across 6 domains** — `ai.ml`, `ai.agents`, `ai.search`, `data.graph`, `systems.network`, `physics.quantum`
+
+→ [Browse the registry](registry/) · [Contribute a concept](registry/README.md)
 
 ---
 

@@ -1,0 +1,35 @@
+{
+  "domain": "ai.search",
+  "description": "Search and retrieval — semantic search, embeddings, and information retrieval for AI systems",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:ai.search.001",
+      "ref": "semantic_search",
+      "label": "Semantic Search",
+      "description": "Retrieval method that matches queries by meaning rather than exact keywords, using vector embeddings to find conceptually related content",
+      "aliases": ["dense retrieval", "neural search", "meaning-based search"],
+      "introduced": "2019",
+      "canonical_ref": "https://arxiv.org/abs/1908.10084"
+    },
+    {
+      "id": "stp:ai.search.002",
+      "ref": "vector_embedding",
+      "label": "Vector Embedding",
+      "description": "Dense numeric representation of text, images, or other data in high-dimensional space where semantic similarity corresponds to geometric proximity",
+      "aliases": ["text embedding", "sentence embedding", "dense vector"],
+      "introduced": "2013",
+      "canonical_ref": "https://arxiv.org/abs/1301.3666"
+    },
+    {
+      "id": "stp:ai.search.003",
+      "ref": "retrieval",
+      "label": "Information Retrieval",
+      "description": "Process of finding relevant documents, passages, or facts from a corpus in response to a query",
+      "aliases": ["document retrieval", "passage retrieval", "IR"],
+      "introduced": "1960",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Information_retrieval"
+    }
+  ]
+}

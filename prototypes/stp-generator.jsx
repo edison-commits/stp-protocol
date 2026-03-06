@@ -255,7 +255,7 @@ export default function BlockGenerator() {
   const [error, setError]         = useState(null);
   const [tab, setTab]             = useState("overview"); // overview | raw | embed
   const [loadingSample, setLoadingSample] = useState(null);
-  const [apiKey, setApiKey]       = useState("");
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_ANTHROPIC_API_KEY || "");
   const textareaRef = useRef(null);
 
   const loadSample = (sample, idx) => {

@@ -1,0 +1,26 @@
+{
+  "domain": "physics.quantum",
+  "description": "Quantum computing — quantum information processing and error correction",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:physics.quantum.001",
+      "ref": "quantum_computing",
+      "label": "Quantum Computing",
+      "description": "Computing paradigm exploiting quantum superposition and entanglement to perform certain calculations exponentially faster than classical computers",
+      "aliases": ["quantum processor", "quantum computer", "QPU"],
+      "introduced": "1980",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Quantum_computing"
+    },
+    {
+      "id": "stp:physics.quantum.002",
+      "ref": "error_correction",
+      "label": "Quantum Error Correction",
+      "description": "Techniques for detecting and correcting errors in quantum computations caused by decoherence and quantum noise",
+      "aliases": ["QEC", "qubit error correction", "fault-tolerant quantum computing"],
+      "introduced": "1995",
+      "canonical_ref": "https://arxiv.org/abs/quant-ph/9512032"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "domain": "ai.agents",
+  "description": "AI agents — autonomous systems that perceive, reason, plan, and act",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:ai.agents.001",
+      "ref": "agent",
+      "label": "AI Agent",
+      "description": "Autonomous system that perceives its environment, maintains state, plans, and executes actions toward goals",
+      "aliases": ["autonomous agent", "AI agent", "agentic system"],
+      "introduced": "2022",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Intelligent_agent"
+    },
+    {
+      "id": "stp:ai.agents.002",
+      "ref": "memory",
+      "label": "Agent Memory",
+      "description": "Mechanisms for agents to store and retrieve context across turns — short-term (context window), long-term (vector DB), episodic (session logs)",
+      "aliases": ["context memory", "episodic memory", "long-term memory"],
+      "introduced": "2023",
+      "canonical_ref": "https://arxiv.org/abs/2304.03442"
+    },
+    {
+      "id": "stp:ai.agents.003",
+      "ref": "tool_use",
+      "label": "Tool Use",
+      "description": "Capability for agents to invoke external APIs, code interpreters, browsers, and other tools to augment their actions",
+      "aliases": ["function calling", "tool calling", "plugin use"],
+      "introduced": "2023",
+      "canonical_ref": "https://arxiv.org/abs/2302.04761"
+    },
+    {
+      "id": "stp:ai.agents.004",
+      "ref": "reasoning",
+      "label": "Reasoning",
+      "description": "Cognitive process of drawing conclusions, making inferences, and solving problems — includes chain-of-thought and multi-step planning",
+      "aliases": ["chain-of-thought", "CoT", "planning", "step-by-step reasoning"],
+      "introduced": "2022",
+      "canonical_ref": "https://arxiv.org/abs/2201.11903"
+    },
+    {
+      "id": "stp:ai.agents.005",
+      "ref": "multi_agent",
+      "label": "Multi-Agent System",
+      "description": "Architecture where multiple AI agents collaborate, compete, or communicate to accomplish tasks beyond the capability of any single agent",
+      "aliases": ["agent swarm", "agent orchestration", "multi-agent framework"],
+      "introduced": "2023",
+      "canonical_ref": "https://arxiv.org/abs/2308.08155"
+    }
+  ]
+}

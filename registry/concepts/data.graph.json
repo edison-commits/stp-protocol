@@ -1,0 +1,26 @@
+{
+  "domain": "data.graph",
+  "description": "Graph and knowledge representation — structured data models for relational knowledge",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:data.graph.001",
+      "ref": "knowledge_graph",
+      "label": "Knowledge Graph",
+      "description": "Graph-structured data model representing real-world entities as nodes and their relationships as typed edges, with optional metadata",
+      "aliases": ["KG", "semantic graph", "entity graph"],
+      "introduced": "2012",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Knowledge_graph"
+    },
+    {
+      "id": "stp:data.graph.002",
+      "ref": "semantic_triple",
+      "label": "Semantic Triple",
+      "description": "Fundamental unit of knowledge representation: subject-predicate-object structure expressing a single fact or relationship",
+      "aliases": ["RDF triple", "subject-predicate-object", "SPO"],
+      "introduced": "1999",
+      "canonical_ref": "https://www.w3.org/TR/rdf-concepts/"
+    }
+  ]
+}

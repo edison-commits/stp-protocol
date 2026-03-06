@@ -1,0 +1,26 @@
+{
+  "domain": "systems.network",
+  "description": "Networking and protocols — communication standards for distributed systems and agents",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:systems.network.001",
+      "ref": "protocol",
+      "label": "Protocol",
+      "description": "Formal set of rules governing data format, sequencing, and error handling between communicating parties in a network or system",
+      "aliases": ["communication protocol", "network protocol", "wire format"],
+      "introduced": "1960",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Communication_protocol"
+    },
+    {
+      "id": "stp:systems.network.002",
+      "ref": "semantic_protocol",
+      "label": "Semantic Protocol",
+      "description": "Protocol layer that communicates meaning rather than raw data — typed relationships, confidence scores, and provenance over transport",
+      "aliases": ["meaning protocol", "STP"],
+      "introduced": "2026",
+      "canonical_ref": "https://semanticweb.dev"
+    }
+  ]
+}

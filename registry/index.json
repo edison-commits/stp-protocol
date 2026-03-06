@@ -1,0 +1,49 @@
+{
+  "registry": "STP Concept Registry",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "description": "Canonical concept identifiers for the Semantic Transfer Protocol. Every concept has a stable ID in the format stp:domain.subdomain.NNN.",
+  "spec": "https://github.com/edison-commits/stp-protocol/blob/main/spec/STP-0.1.md",
+  "domains": [
+    {
+      "id": "ai.ml",
+      "label": "Machine Learning",
+      "file": "concepts/ai.ml.json",
+      "concept_count": 6
+    },
+    {
+      "id": "ai.agents",
+      "label": "AI Agents",
+      "file": "concepts/ai.agents.json",
+      "concept_count": 5
+    },
+    {
+      "id": "ai.search",
+      "label": "Search & Retrieval",
+      "file": "concepts/ai.search.json",
+      "concept_count": 3
+    },
+    {
+      "id": "data.graph",
+      "label": "Graph & Knowledge",
+      "file": "concepts/data.graph.json",
+      "concept_count": 2
+    },
+    {
+      "id": "systems.network",
+      "label": "Networking & Protocols",
+      "file": "concepts/systems.network.json",
+      "concept_count": 2
+    },
+    {
+      "id": "physics.quantum",
+      "label": "Quantum Computing",
+      "file": "concepts/physics.quantum.json",
+      "concept_count": 2
+    }
+  ],
+  "total_concepts": 20,
+  "id_format": "stp:domain.subdomain.NNN",
+  "id_example": "stp:ai.ml.006",
+  "contributing": "Submit a PR to add concepts. New domains require a spec amendment."
+}

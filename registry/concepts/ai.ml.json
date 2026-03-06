@@ -1,0 +1,62 @@
+{
+  "domain": "ai.ml",
+  "description": "Machine learning — foundational models, training methods, and inference techniques",
+  "version": "1.0",
+  "updated": "2026-03-05",
+  "concepts": [
+    {
+      "id": "stp:ai.ml.001",
+      "ref": "transformer",
+      "label": "Transformer",
+      "description": "Attention-based neural architecture that processes sequences in parallel using self-attention mechanisms",
+      "aliases": ["attention mechanism", "transformer architecture"],
+      "introduced": "2017",
+      "canonical_ref": "https://arxiv.org/abs/1706.03762"
+    },
+    {
+      "id": "stp:ai.ml.002",
+      "ref": "neural_network",
+      "label": "Neural Network",
+      "description": "Computational model inspired by biological neurons; layers of weighted connections that transform input to output",
+      "aliases": ["deep neural network", "DNN", "ANN"],
+      "introduced": "1943",
+      "canonical_ref": "https://en.wikipedia.org/wiki/Artificial_neural_network"
+    },
+    {
+      "id": "stp:ai.ml.003",
+      "ref": "rag",
+      "label": "Retrieval-Augmented Generation",
+      "description": "Architecture combining a retrieval system with a generative model to ground outputs in external knowledge",
+      "aliases": ["RAG", "retrieval augmented generation"],
+      "introduced": "2020",
+      "canonical_ref": "https://arxiv.org/abs/2005.11401"
+    },
+    {
+      "id": "stp:ai.ml.004",
+      "ref": "fine_tuning",
+      "label": "Fine-Tuning",
+      "description": "Adapting a pre-trained model to a specific task or domain by continuing training on targeted data",
+      "aliases": ["PEFT", "LoRA", "instruction tuning"],
+      "introduced": "2018",
+      "canonical_ref": "https://arxiv.org/abs/1801.06146"
+    },
+    {
+      "id": "stp:ai.ml.005",
+      "ref": "training_data",
+      "label": "Training Data",
+      "description": "Labeled or unlabeled dataset used to adjust model parameters during the learning process",
+      "aliases": ["dataset", "pretraining corpus"],
+      "introduced": null,
+      "canonical_ref": "https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets"
+    },
+    {
+      "id": "stp:ai.ml.006",
+      "ref": "large_language_model",
+      "label": "Large Language Model",
+      "description": "Transformer-based model trained on large text corpora capable of generating, summarizing, and reasoning about text",
+      "aliases": ["LLM", "foundation model", "language model"],
+      "introduced": "2018",
+      "canonical_ref": "https://arxiv.org/abs/2005.14165"
+    }
+  ]
+}
