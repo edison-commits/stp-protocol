@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STP-Enabled Webpage Demo</title>
+
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  STP/0.1 — SEMANTIC TRANSFER PROTOCOL METADATA BLOCK    ║
+  ║  This block is invisible to humans, parsed by agents.   ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+<script type="application/stp+json" id="stp-meta">
+{
+  "stp": "0.1",
+  "page": {
+    "url": "https://example.com/ai-agents-research",
+    "canonical": true,
+    "lang": "en",
+    "last_modified": "2026-03-05"
+  },
+  "intent": "inform",
+  "summary": {
+    "concepts": [
+      { "id": "c001", "ref": "agent",             "weight": 0.97, "label": "AI Agent" },
+      { "id": "c002", "ref": "semantic_search",    "weight": 0.91, "label": "Semantic Search" },
+      { "id": "c003", "ref": "vector_embedding",   "weight": 0.88, "label": "Vector Embedding" },
+      { "id": "c004", "ref": "knowledge_graph",    "weight": 0.82, "label": "Knowledge Graph" },
+      { "id": "c005", "ref": "retrieval",          "weight": 0.79, "label": "Retrieval System" }
+    ],
+    "relations": [
+      { "from": "c001", "to": "c002", "type": "requires",   "strength": 0.93 },
+      { "from": "c002", "to": "c003", "type": "requires",   "strength": 0.89 },
+      { "from": "c003", "to": "c004", "type": "supports",   "strength": 0.84 },
+      { "from": "c001", "to": "c005", "type": "causes",     "strength": 0.78 }
+    ],
+    "context": {
+      "domain": "ai.agents",
+      "recency": "2026-Q1",
+      "confidence_floor": 0.78,
+      "audience": "agent | researcher"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "intent": "assert",
+      "concepts": ["c001","c002"],
+      "key_claim": "AI agents require semantic search to operate efficiently at scale",
+      "confidence": 0.91
+    },
+    {
+      "id": "embeddings",
+      "intent": "assert",
+      "concepts": ["c003","c004"],
+      "key_claim": "Vector embeddings encode meaning as geometry, enabling knowledge graph construction",
+      "confidence": 0.87
+    },
+    {
+      "id": "retrieval",
+      "intent": "assert",
+      "concepts": ["c001","c005"],
+      "key_claim": "Agents cause retrieval systems to evolve toward semantic precision",
+      "confidence": 0.83
+    }
+  ],
+  "provenance": {
+    "author": "research_agent_01",
+    "published": "2026-03-01",
+    "confidence": 0.89,
+    "source_type": "primary_research"
+  },
+  "agent_hints": {
+    "skip_sections": ["navigation","footer","sidebar"],
+    "primary_content": "#main-content",
+    "data_endpoint": "/api/stp/page-data",
+    "related_pages": [
+      { "url": "/vector-embeddings", "relation": "supports", "strength": 0.88 },
+      { "url": "/knowledge-graphs",  "relation": "relates_to","strength": 0.81 }
+    ]
+  }
+}
+</script>
+
+<!-- Standard SEO meta — humans/search engines read this -->
+<meta name="description" content="Research on AI agents and semantic search systems">
+<meta name="keywords" content="AI agents, semantic search, vector embeddings">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0c1018;
+    --border: #151c28;
+    --border2: #0d1520;
+    --text: #c4d4e4;
+    --muted: #3a5070;
+    --dim: #1a2840;
+    --accent: #2dd4ff;
+    --green: #34e8a0;
+    --amber: #f59e0b;
+    --red: #f43f5e;
+    --purple: #a78bfa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── AGENT SCANNER OVERLAY ── */
+  #agent-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,8,15,0.96);
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  #agent-overlay.active { display: flex; flex-direction: column; }
+
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #2dd4ff88, #2dd4ffcc, #2dd4ff88, transparent);
+    animation: scanDown 2s ease-in-out forwards;
+    top: 0;
+  }
+
+  @keyframes scanDown {
+    from { top: 0; opacity: 1; }
+    to   { top: 100%; opacity: 0.3; }
+  }
+
+  .agent-ui {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    gap: 16px;
+    font-family: 'DM Mono', monospace;
+    overflow: hidden;
+  }
+
+  .agent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  .agent-id {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+
+  .pulse-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+  .agent-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .agent-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .agent-panel.wide { grid-column: 1 / -1; }
+  .agent-panel.tall { grid-row: 1 / 3; overflow-y: auto; }
+
+  .panel-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border2);
+    padding-bottom: 6px;
+  }
+
+  .concept-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(45,212,255,0.06);
+    border: 1px solid rgba(45,212,255,0.15);
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: 10px;
+    margin: 2px;
+    color: #7ac8e0;
+  }
+
+  .weight-bar {
+    height: 2px;
+    width: 24px;
+    background: linear-gradient(to right, var(--accent) var(--w), var(--border) 0);
+    border-radius: 1px;
+  }
+
+  .relation-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .rel-type { color: var(--green); opacity: 0.7; font-style: italic; }
+  .rel-node { color: var(--muted); }
+  .rel-strength { color: var(--dim); margin-left: auto; font-size: 9px; }
+
+  .section-card {
+    background: rgba(0,10,20,0.4);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 10px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .section-claim { color: #8ab8d0; margin-top: 4px; font-style: italic; }
+
+  .hint-row {
+    font-size: 10px;
+    color: var(--muted);
+    padding: 3px 0;
+    border-bottom: 1px solid var(--border2);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .hint-val { color: #5a9ab8; }
+
+  .skip-badge {
+    display: inline-block;
+    background: rgba(244,63,94,0.1);
+    border: 1px solid rgba(244,63,94,0.2);
+    color: var(--red);
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin: 1px;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+  }
+  .close-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── HUMAN PAGE ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(7,9,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+
+  .logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+
+  .stp-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.1em;
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .stp-badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(45,212,255,0.05);
+  }
+
+  .stp-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 5px var(--green);
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 60px 32px; }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: #e4f0f8;
+  }
+
+  h1 em { font-style: normal; color: var(--accent); }
+
+  .lead {
+    font-size: 16px;
+    line-height: 1.75;
+    color: #6a8aaa;
+    max-width: 620px;
+    margin-bottom: 48px;
+    font-weight: 400;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+    margin: 48px 0;
+  }
+
+  #main-content h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #d4e4f4;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  #main-content p {
+    font-size: 14px;
+    line-height: 1.85;
+    color: #5a7a9a;
+    margin-bottom: 32px;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    border: 1px solid rgba(52,232,160,0.2);
+    background: rgba(52,232,160,0.05);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+
+  .source-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    padding: 16px 0;
+    border-top: 1px solid var(--border2);
+    display: flex;
+    justify-content: space-between;
+    letter-spacing: 0.06em;
+    margin-top: 48px;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+  }
+
+  /* How it works banner */
+  .how-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .how-item { }
+  .how-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--border);
+    margin-bottom: 6px;
+  }
+  .how-title { font-size: 12px; font-weight: 700; color: #8ab0cc; margin-bottom: 4px; }
+  .how-desc { font-size: 11px; color: var(--muted); line-height: 1.6; font-family: 'DM Mono', monospace; }
+
+  /* Tag for STP sections */
+  .stp-section-marker {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    margin-bottom: 6px;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── AGENT OVERLAY ─────────────────────────────────────── -->
+<div id="agent-overlay">
+  <div class="scan-line"></div>
+  <div class="agent-ui">
+    <div class="agent-header">
+      <div class="agent-id">
+        <div class="pulse-dot"></div>
+        <span>STP_AGENT_CRAWLER / v0.1</span>
+        <span style="color:var(--muted); margin-left:8px">● PAGE PARSED IN <span id="parse-time">—</span>ms</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:0.1em">SKIPPING HUMAN RENDER LAYER</span>
+        <button class="close-btn" onclick="closeAgent()">✕ EXIT AGENT VIEW</button>
+      </div>
+    </div>
+
+    <div class="agent-grid">
+
+      <!-- Concepts panel -->
+      <div class="agent-panel">
+        <div class="panel-label">CONCEPTS · WEIGHTED</div>
+        <div id="agent-concepts"></div>
+      </div>
+
+      <!-- Relations panel -->
+      <div class="agent-panel">
+        <div class="panel-label">SEMANTIC RELATIONS</div>
+        <div id="agent-relations"></div>
+      </div>
+
+      <!-- Sections panel -->
+      <div class="agent-panel">
+        <div class="panel-label">PAGE SECTIONS · KEY CLAIMS</div>
+        <div id="agent-sections"></div>
+      </div>
+
+      <!-- Agent hints panel -->
+      <div class="agent-panel">
+        <div class="panel-label">AGENT HINTS · SKIP / FETCH / NAVIGATE</div>
+        <div id="agent-hints"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── HUMAN PAGE ─────────────────────────────────────────── -->
+<header>
+  <div class="logo">STP</div>
+  <nav style="display:flex; align-items:center; gap:20px">
+    <span style="font-size:12px; color:var(--muted); font-family:'DM Mono',monospace">v0.1 · RESEARCH</span>
+    <button class="stp-badge" onclick="activateAgent()">
+      <div class="dot"></div>
+      STP ENABLED · VIEW AS AGENT
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="eyebrow">SEMANTIC TRANSFER PROTOCOL · RESEARCH NOTE · 2026</div>
+
+  <h1>A webpage that <em>speaks</em><br>to agents directly</h1>
+
+  <p class="lead">
+    This page carries two layers of meaning. One rendered for you. One embedded for agents — structured, weighted, zero fluff. Click "View as Agent" to see what an AI crawler reads instead of this.
+  </p>
+
+  <div class="how-banner">
+    <div class="how-item">
+      <div class="how-num">01</div>
+      <div class="how-title">EMBED STP BLOCK</div>
+      <div class="how-desc">A <code style="color:var(--accent)">&lt;script type="application/stp+json"&gt;</code> tag in the page head. Browsers ignore it. Agents parse it first.</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">02</div>
+      <div class="how-title">AGENT READS DIRECTLY</div>
+      <div class="how-desc">Concepts, relations, confidence, provenance — all pre-structured. No scraping, no stripping HTML, no re-parsing.</div>
+    </div>
+    <div class="how-item">
+      <div class="how-num">03</div>
+      <div class="how-title">HUMAN SEES NOTHING</div>
+      <div class="how-desc">The STP block is invisible in the rendered page. Humans read this. Agents skip this and read the structured layer.</div>
+    </div>
+  </div>
+
+  <div id="main-content">
+
+    <div id="intro">
+      <div class="stp-section-marker">STP:SECTION · intro · assert</div>
+      <div class="section-tag">AI AGENTS</div>
+      <h2>Agents need meaning, not markup</h2>
+      <p>
+        Every time an AI agent visits a webpage today, it wades through navigation menus, cookie banners, ads, sidebar widgets, and thousands of tokens of HTML before reaching the actual content. This is a fundamental mismatch. The page was built for eyes, not for inference engines. STP fixes this at the source — by embedding a machine-readable semantic layer directly in the page, agents can skip the rendering entirely and operate on structured meaning from the first byte.
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="embeddings">
+      <div class="stp-section-marker">STP:SECTION · embeddings · assert</div>
+      <div class="section-tag">VECTOR EMBEDDINGS</div>
+      <h2>Meaning encoded as geometry</h2>
+      <p>
+        Inside this page's STP block, concepts aren't strings — they're references to semantic identifiers with associated weights. The relationships between them are typed and directional: "requires", "supports", "contradicts". An agent reading this doesn't need to infer what the page is about. The page tells it directly, in a format designed for machine consumption. The human text you're reading right now is the translation layer. It exists for you. The STP block exists for agents.
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="retrieval">
+      <div class="stp-section-marker">STP:SECTION · retrieval · assert</div>
+      <div class="section-tag">RETRIEVAL SYSTEMS</div>
+      <h2>The web, re-indexed for agents</h2>
+      <p>
+        If STP were adopted broadly, search for agents would work differently. Instead of crawling HTML and rebuilding semantic structure from scratch, an agent crawler would request the STP endpoint, receive a structured knowledge packet, and move on. No rendering engine needed. No NLP pipeline to recover what was always there. The concept of a "webpage" splits into two parallel things: a human artifact and a machine artifact, occupying the same URL, serving different audiences simultaneously.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="source-note">
+    <span>STP/0.1 · RESEARCH PROTOTYPE</span>
+    <span>AGENT ENDPOINT: /api/stp/page-data</span>
+    <span>CONFIDENCE: 0.89</span>
+  </div>
+</main>
+
+<footer>
+  <span>STP / SEMANTIC TRANSFER PROTOCOL / v0.1</span>
+  <span style="color:var(--border)">HUMAN LAYER · AGENT LAYER · SAME URL</span>
+</footer>
+
+<script>
+  // Read the STP block — exactly what an agent would do
+  function parseSTPage() {
+    const start = performance.now();
+    const el = document.getElementById('stp-meta');
+    const data = JSON.parse(el.textContent);
+    const elapsed = Math.round(performance.now() - start);
+    return { data, elapsed };
+  }
+
+  function activateAgent() {
+    const { data, elapsed } = parseSTPage();
+    const overlay = document.getElementById('agent-overlay');
+    overlay.classList.add('active');
+    document.getElementById('parse-time').textContent = elapsed;
+
+    // Render concepts
+    const conceptMap = {};
+    data.summary.concepts.forEach(c => { conceptMap[c.id] = c; });
+
+    document.getElementById('agent-concepts').innerHTML = data.summary.concepts.map(c => `
+      <div class="concept-chip">
+        <span style="color:var(--accent);opacity:0.4;font-size:9px">${c.id}</span>
+        <span>${c.ref}</span>
+        <div class="weight-bar" style="--w:${c.weight*100}%"></div>
+        <span style="color:var(--muted);font-size:9px">${Math.round(c.weight*100)}%</span>
+      </div>
+    `).join('');
+
+    // Render relations
+    document.getElementById('agent-relations').innerHTML = data.summary.relations.map(r => {
+      const f = conceptMap[r.from];
+      const t = conceptMap[r.to];
+      return `
+        <div class="relation-row">
+          <span class="rel-node">${f?.ref || r.from}</span>
+          <span class="rel-type">${r.type}</span>
+          <span class="rel-node">${t?.ref || r.to}</span>
+          <span class="rel-strength">${Math.round(r.strength*100)}%</span>
+        </div>
+      `;
+    }).join('');
+
+    // Render sections
+    document.getElementById('agent-sections').innerHTML = data.sections.map(s => `
+      <div class="section-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="color:var(--accent);font-size:9px;letter-spacing:0.1em">#${s.id}</span>
+          <span style="color:var(--muted);font-size:9px">${s.intent} · ${Math.round(s.confidence*100)}%</span>
+        </div>
+        <div class="section-claim">"${s.key_claim}"</div>
+      </div>
+    `).join('');
+
+    // Render hints
+    const h = data.agent_hints;
+    document.getElementById('agent-hints').innerHTML = `
+      <div class="hint-row"><span>PRIMARY CONTENT</span><span class="hint-val">${h.primary_content}</span></div>
+      <div class="hint-row"><span>DATA ENDPOINT</span><span class="hint-val">${h.data_endpoint}</span></div>
+      <div class="hint-row">
+        <span>SKIP SECTIONS</span>
+        <span>${h.skip_sections.map(s=>`<span class="skip-badge">${s}</span>`).join('')}</span>
+      </div>
+      <div style="margin-top:10px; font-size:9px; color:var(--muted); letter-spacing:0.1em; margin-bottom:6px">RELATED PAGES</div>
+      ${h.related_pages.map(p=>`
+        <div class="hint-row">
+          <span class="hint-val">${p.url}</span>
+          <span style="color:var(--green);font-size:9px;margin:0 6px">${p.relation}</span>
+          <span style="color:var(--dim);font-size:9px">${Math.round(p.strength*100)}%</span>
+        </div>
+      `).join('')}
+      <div style="margin-top:10px">
+        <div class="hint-row"><span>DOMAIN</span><span class="hint-val">${data.summary.context.domain}</span></div>
+        <div class="hint-row"><span>AUDIENCE</span><span class="hint-val">${data.summary.context.audience}</span></div>
+        <div class="hint-row"><span>PROVENANCE</span><span class="hint-val">${data.provenance.source_type} · ${Math.round(data.provenance.confidence*100)}%</span></div>
+      </div>
+    `;
+  }
+
+  function closeAgent() {
+    document.getElementById('agent-overlay').classList.remove('active');
+  }
+
+  // Keyboard shortcut
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAgent();
+    if (e.key === 'a' && e.metaKey) { e.preventDefault(); activateAgent(); }
+  });
+</script>
+</body>
+</html>

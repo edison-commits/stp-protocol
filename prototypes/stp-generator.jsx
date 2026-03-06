@@ -255,7 +255,6 @@ export default function BlockGenerator() {
   const [error, setError]         = useState(null);
   const [tab, setTab]             = useState("overview"); // overview | raw | embed
   const [loadingSample, setLoadingSample] = useState(null);
-  const [apiKey, setApiKey] = useState(import.meta.env.VITE_ANTHROPIC_API_KEY || "");
   const textareaRef = useRef(null);
 
   const loadSample = (sample, idx) => {
@@ -276,12 +275,12 @@ export default function BlockGenerator() {
     setError(null);
 
     try {
-      const resp = await fetch("/anthropic/v1/messages", {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-allow-browser": "true" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 2048,
+          max_tokens: 1000,
           system: SYSTEM_PROMPT,
           messages: [{
             role: "user",
@@ -300,7 +299,7 @@ export default function BlockGenerator() {
       setResult(parsed);
       setTab("overview");
     } catch (e) {
-      setError(`Generation failed: ${e.message}`);
+      setError(`Generation failed: ${e.message}. Check that the API key is available.`);
     } finally {
       setGenerating(false);
     }
@@ -472,27 +471,10 @@ ${JSON.stringify({
             </div>
           </div>
 
-          {/* API Key input */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 9, letterSpacing: "0.12em", color: C.muted, marginBottom: 6 }}>ANTHROPIC API KEY</div>
-            <input
-              type="password"
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
-              placeholder="sk-ant-..."
-              style={{
-                width: "100%", padding: "9px 12px",
-                background: C.bg, border: `1px solid ${C.border}`,
-                borderRadius: 5, fontSize: 11, color: C.ink,
-                fontFamily: "inherit", outline: "none",
-              }}
-            />
-          </div>
-
           {/* Generate button */}
           <button
             onClick={generate}
-            disabled={generating || (!input.trim() && !url.trim()) || !apiKey.trim()}
+            disabled={generating || (!input.trim() && !url.trim())}
             style={{
               background: generating ? C.muted : C.ink,
               color: C.bg,

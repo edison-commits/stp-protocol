@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STP Commerce Demo</title>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  STP/0.1 — COMMERCE EXTENSION                               ║
+  ║  Agents: parse this block, call actions[], skip the DOM.    ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<script type="application/stp+json" id="stp-meta">
+{
+  "stp": "0.1",
+  "page_type": "product",
+  "intent": "commerce",
+
+  "product": {
+    "id": "prod_9x7k2m",
+    "name": "Carhartt WIP Jacket",
+    "brand": "Carhartt",
+    "category": "workwear.outerwear",
+    "price": { "amount": 149.99, "currency": "USD", "sale": false },
+    "availability": "in_stock",
+    "rating": 4.7,
+    "review_count": 312,
+    "variants": [
+      { "id": "v001", "label": "S / Black",  "in_stock": true  },
+      { "id": "v002", "label": "M / Black",  "in_stock": true  },
+      { "id": "v003", "label": "L / Black",  "in_stock": false },
+      { "id": "v004", "label": "S / Brown",  "in_stock": true  },
+      { "id": "v005", "label": "M / Brown",  "in_stock": true  }
+    ]
+  },
+
+  "summary": {
+    "concepts": [
+      { "id": "c001", "ref": "workwear",      "weight": 0.97 },
+      { "id": "c002", "ref": "outerwear",     "weight": 0.91 },
+      { "id": "c003", "ref": "durability",    "weight": 0.88 },
+      { "id": "c004", "ref": "carhartt",      "weight": 0.95 }
+    ],
+    "relations": [
+      { "from": "c001", "to": "c003", "type": "requires",  "strength": 0.92 },
+      { "from": "c004", "to": "c001", "type": "is_type_of","strength": 0.97 }
+    ]
+  },
+
+  "actions": [
+    {
+      "id": "act_select_variant",
+      "label": "Select variant",
+      "method": "POST",
+      "endpoint": "/api/stp/cart/variant",
+      "required_params": ["variant_id"],
+      "optional_params": [],
+      "returns": "variant_confirmation"
+    },
+    {
+      "id": "act_add_to_cart",
+      "label": "Add to cart",
+      "method": "POST",
+      "endpoint": "/api/stp/cart/add",
+      "required_params": ["product_id", "variant_id", "quantity"],
+      "optional_params": ["gift_wrap"],
+      "returns": "cart_state"
+    },
+    {
+      "id": "act_buy_now",
+      "label": "Buy now — skip cart",
+      "method": "POST",
+      "endpoint": "/api/stp/checkout/express",
+      "required_params": ["product_id", "variant_id", "quantity", "shipping_profile_id"],
+      "optional_params": ["promo_code"],
+      "returns": "checkout_session"
+    },
+    {
+      "id": "act_get_cart",
+      "label": "Read current cart",
+      "method": "GET",
+      "endpoint": "/api/stp/cart",
+      "required_params": [],
+      "optional_params": [],
+      "returns": "cart_state"
+    },
+    {
+      "id": "act_checkout",
+      "label": "Complete checkout",
+      "method": "POST",
+      "endpoint": "/api/stp/checkout/complete",
+      "required_params": ["checkout_session_id", "payment_token"],
+      "optional_params": ["promo_code"],
+      "returns": "order_confirmation"
+    }
+  ],
+
+  "agent_hints": {
+    "skip_sections": ["navigation", "footer", "reviews_carousel", "related_products_ui"],
+    "primary_content": "#product-data",
+    "auth_required": ["act_buy_now", "act_checkout"],
+    "auth_endpoint": "/api/stp/auth",
+    "recommended_flow": ["act_select_variant", "act_add_to_cart", "act_checkout"]
+  },
+
+  "provenance": {
+    "source": "store_platform",
+    "confidence": 0.99,
+    "last_updated": "2026-03-05T10:00:00Z"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #08080a;
+  --surface: #0f0f12;
+  --surface2: #13131a;
+  --border: #1c1c26;
+  --border2: #141420;
+  --text: #d8d8e8;
+  --muted: #44445a;
+  --dim: #1e1e2a;
+  --accent: #e8c87a;
+  --green: #4ade80;
+  --red: #f43f5e;
+  --blue: #60a5fa;
+  --purple: #a78bfa;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── AGENT OVERLAY ── */
+#agent-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(6,6,8,0.97);z-index:1000;
+  font-family:'DM Mono',monospace;
+  flex-direction:column;overflow:hidden;
+}
+#agent-overlay.active{display:flex}
+
+.ao-header{
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,0,0,0.3);
+}
+.ao-id{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:0.15em;color:var(--accent)}
+.ao-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.ao-body{
+  display:grid;
+  grid-template-columns:1fr 1.2fr 1fr;
+  gap:1px;background:var(--border);
+  flex:1;overflow:hidden;
+}
+.ao-col{background:var(--bg);padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.ao-label{font-size:9px;letter-spacing:0.2em;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--border2)}
+
+.product-summary{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:14px;
+}
+.prod-name{font-size:15px;font-weight:700;color:#e8e8f0;margin-bottom:4px;font-family:'Syne',sans-serif}
+.prod-price{font-size:22px;font-weight:800;color:var(--accent);margin-bottom:8px;font-family:'Syne',sans-serif}
+.prod-stat{display:flex;gap:16px;font-size:10px;margin-bottom:10px}
+.in-stock{color:var(--green)}
+.prod-concepts{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.concept-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(232,200,122,0.06);border:1px solid rgba(232,200,122,0.15);
+  border-radius:3px;padding:2px 7px;font-size:9px;color:#b8a060;
+}
+
+.variant-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.variant-item{
+  padding:7px 10px;border-radius:4px;font-size:10px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:all 0.2s;
+}
+.variant-item.available:hover{border-color:var(--accent);background:rgba(232,200,122,0.05)}
+.variant-item.selected{border-color:var(--accent);background:rgba(232,200,122,0.08);color:var(--accent)}
+.variant-item.out{opacity:0.3;cursor:not-allowed;text-decoration:line-through}
+.v-label{color:#8888a0}
+.v-badge{font-size:8px;padding:1px 5px;border-radius:2px}
+.v-in{background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+.v-out{background:rgba(244,63,94,0.1);color:var(--red);border:1px solid rgba(244,63,94,0.2)}
+
+.action-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:12px;cursor:pointer;
+  transition:all 0.25s;
+}
+.action-card:hover{border-color:var(--accent);background:var(--surface2)}
+.action-card.executing{border-color:var(--blue);background:rgba(96,165,250,0.05)}
+.action-card.done{border-color:var(--green);background:rgba(74,222,128,0.05)}
+.action-card.error{border-color:var(--red);background:rgba(244,63,94,0.05)}
+
+.ac-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ac-id{font-size:9px;letter-spacing:0.12em;color:var(--muted)}
+.ac-label{font-size:11px;color:#c8c8e0;font-weight:600;margin-bottom:6px;font-family:'Syne',sans-serif}
+.ac-method{
+  font-size:9px;padding:1px 6px;border-radius:2px;
+  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);color:var(--purple);
+}
+.ac-endpoint{font-size:9px;color:var(--muted);margin:4px 0}
+.ac-params{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.param-chip{
+  font-size:8px;padding:1px 6px;border-radius:2px;
+  background:var(--dim);border:1px solid var(--border2);color:var(--muted);
+}
+.param-chip.required{background:rgba(232,200,122,0.08);border-color:rgba(232,200,122,0.2);color:#8a7840}
+.exec-btn{
+  width:100%;margin-top:10px;padding:7px;
+  background:rgba(232,200,122,0.08);border:1px solid rgba(232,200,122,0.2);
+  color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.12em;border-radius:4px;cursor:pointer;
+  transition:all 0.2s;
+}
+.exec-btn:hover{background:rgba(232,200,122,0.15)}
+.exec-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+.log-stream{
+  flex:1;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:12px;
+  font-size:10px;line-height:1.8;
+  min-height:200px;
+}
+.log-line{padding:2px 0;border-bottom:1px solid var(--border2)}
+.log-time{color:var(--dim);margin-right:8px}
+.log-agent{color:var(--blue)}
+.log-action{color:var(--accent)}
+.log-success{color:var(--green)}
+.log-error{color:var(--red)}
+.log-info{color:var(--muted)}
+
+.response-panel{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:12px;flex:1;overflow-y:auto;
+}
+.resp-label{font-size:9px;letter-spacing:0.15em;color:var(--muted);margin-bottom:8px}
+.resp-json{font-size:9px;color:#5a6a8a;white-space:pre-wrap;word-break:break-all;line-height:1.7}
+
+.cart-state{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:12px;
+}
+.cart-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border2);font-size:10px;
+}
+.cart-total{
+  display:flex;justify-content:space-between;
+  padding:8px 0 0;font-size:12px;font-weight:700;
+  color:var(--accent);font-family:'Syne',sans-serif;
+}
+
+.flow-diagram{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:12px;
+}
+.flow-step{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 0;font-size:10px;
+}
+.flow-num{
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;flex-shrink:0;
+  background:var(--dim);border:1px solid var(--border);color:var(--muted);
+  transition:all 0.3s;
+}
+.flow-num.active{background:rgba(232,200,122,0.15);border-color:var(--accent);color:var(--accent)}
+.flow-num.done{background:rgba(74,222,128,0.15);border-color:var(--green);color:var(--green)}
+.flow-arrow{color:var(--dim);font-size:8px;margin:0 2px}
+
+.close-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:5px 14px;border-radius:4px;
+  cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;transition:all 0.2s;
+}
+.close-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── HUMAN STORE PAGE ── */
+header{
+  border-bottom:1px solid var(--border);padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:rgba(8,8,10,0.93);
+  backdrop-filter:blur(12px);z-index:10;
+}
+.logo{font-size:14px;font-weight:800;letter-spacing:0.25em;color:var(--accent)}
+.stp-btn{
+  display:flex;align-items:center;gap:7px;
+  font-size:10px;font-family:'DM Mono',monospace;
+  color:var(--muted);border:1px solid var(--border);
+  padding:5px 14px;border-radius:20px;cursor:pointer;
+  transition:all 0.25s;letter-spacing:0.1em;
+  background:transparent;
+}
+.stp-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(232,200,122,0.05)}
+.stp-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green)}
+
+.product-page{
+  max-width:960px;margin:0 auto;padding:48px 28px;
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;
+  align-items:start;
+}
+
+.product-image{
+  aspect-ratio:1;background:var(--surface);
+  border:1px solid var(--border);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;color:var(--dim);
+}
+.product-image-icon{font-size:64px;opacity:0.15}
+.product-image-label{font-size:11px;letter-spacing:0.1em;font-family:'DM Mono',monospace;color:var(--border)}
+
+.product-info{display:flex;flex-direction:column;gap:20px}
+.brand-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--muted)}
+.product-name{font-size:28px;font-weight:800;letter-spacing:-0.02em;color:#e8e8f0;line-height:1.1}
+.product-price{font-size:32px;font-weight:800;color:var(--accent)}
+.product-rating{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace}
+.stars{color:var(--accent)}
+
+.section-label{font-size:10px;letter-spacing:0.15em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:8px}
+.variant-selector{display:flex;flex-wrap:wrap;gap:6px}
+.v-btn{
+  padding:6px 14px;border:1px solid var(--border);border-radius:4px;
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;background:transparent;
+}
+.v-btn:hover{border-color:var(--text);color:var(--text)}
+.v-btn.selected{border-color:var(--accent);color:var(--accent);background:rgba(232,200,122,0.06)}
+.v-btn.out{opacity:0.3;cursor:not-allowed;text-decoration:line-through}
+
+.add-btn{
+  width:100%;padding:14px;
+  background:var(--accent);border:none;
+  color:#0a0a08;font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:0.1em;
+  border-radius:6px;cursor:pointer;transition:all 0.2s;
+}
+.add-btn:hover{background:#f0d888;transform:translateY(-1px)}
+
+.buy-btn{
+  width:100%;padding:12px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--text);font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:0.08em;
+  border-radius:6px;cursor:pointer;transition:all 0.2s;
+}
+.buy-btn:hover{border-color:var(--text)}
+
+.product-desc{
+  font-size:13px;line-height:1.8;color:#5a5a70;
+  font-weight:400;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ AGENT OVERLAY ═══════════════════════════════════════════ -->
+<div id="agent-overlay">
+  <div class="ao-header">
+    <div class="ao-id">
+      <div class="ao-dot"></div>
+      STP_SHOPPING_AGENT / v0.1
+      <span style="color:var(--muted);margin-left:8px">● COMMERCE MODE · DOM BYPASSED</span>
+    </div>
+    <button class="close-btn" onclick="closeAgent()">✕ EXIT AGENT VIEW</button>
+  </div>
+
+  <div class="ao-body">
+
+    <!-- COL 1: Product data + variants -->
+    <div class="ao-col">
+      <div class="ao-label">PRODUCT DATA · PARSED FROM STP BLOCK</div>
+
+      <div class="product-summary" id="ao-product"></div>
+
+      <div class="ao-label" style="margin-top:4px">VARIANTS · SELECT TO PROCEED</div>
+      <div class="variant-grid" id="ao-variants"></div>
+
+      <div class="ao-label" style="margin-top:4px">RECOMMENDED AGENT FLOW</div>
+      <div class="flow-diagram" id="ao-flow"></div>
+
+      <div class="ao-label" style="margin-top:4px">CART STATE</div>
+      <div class="cart-state" id="ao-cart">
+        <div style="font-size:10px;color:var(--dim)">EMPTY</div>
+      </div>
+    </div>
+
+    <!-- COL 2: Actions -->
+    <div class="ao-col">
+      <div class="ao-label">AVAILABLE ACTIONS · CLICK TO EXECUTE</div>
+      <div id="ao-actions"></div>
+    </div>
+
+    <!-- COL 3: Log + response -->
+    <div class="ao-col">
+      <div class="ao-label">AGENT LOG</div>
+      <div class="log-stream" id="ao-log">
+        <div class="log-line"><span class="log-time">00:00:000</span><span class="log-agent">[AGENT]</span> <span class="log-info">STP block parsed. Commerce mode active.</span></div>
+        <div class="log-line"><span class="log-time">00:00:001</span><span class="log-agent">[AGENT]</span> <span class="log-info">DOM render: SKIPPED.</span></div>
+        <div class="log-line"><span class="log-time">00:00:002</span><span class="log-agent">[AGENT]</span> <span class="log-info">Actions loaded: 5. Auth required: 2.</span></div>
+        <div class="log-line"><span class="log-time">00:00:003</span><span class="log-agent">[AGENT]</span> <span class="log-info">Awaiting variant selection...</span></div>
+      </div>
+
+      <div class="ao-label" style="margin-top:4px">LAST API RESPONSE</div>
+      <div class="response-panel" id="ao-response">
+        <div class="resp-label">AWAITING FIRST ACTION</div>
+        <pre class="resp-json" id="ao-response-json">—</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ HUMAN STORE PAGE ════════════════════════════════════════ -->
+<header>
+  <div class="logo">STORE</div>
+  <button class="stp-btn" onclick="activateAgent()">
+    <div class="stp-dot"></div>
+    STP ENABLED · VIEW AS AGENT
+  </button>
+</header>
+
+<div class="product-page">
+  <div class="product-image">
+    <div class="product-image-icon">🧥</div>
+    <div class="product-image-label">PRODUCT IMAGE</div>
+  </div>
+
+  <div class="product-info" id="product-data">
+    <div class="brand-tag">CARHARTT WIP</div>
+    <div class="product-name">WIP Active Jacket</div>
+    <div class="product-rating">
+      <span class="stars">★★★★★</span>
+      <span>4.7 · 312 reviews</span>
+    </div>
+    <div class="product-price">$149.99</div>
+
+    <div>
+      <div class="section-label">SELECT VARIANT</div>
+      <div class="variant-selector">
+        <button class="v-btn">S / Black</button>
+        <button class="v-btn">M / Black</button>
+        <button class="v-btn out" disabled>L / Black</button>
+        <button class="v-btn">S / Brown</button>
+        <button class="v-btn">M / Brown</button>
+      </div>
+    </div>
+
+    <button class="add-btn">ADD TO CART</button>
+    <button class="buy-btn">BUY NOW</button>
+
+    <p class="product-desc">
+      Built for the job site and the street. Duck canvas construction with a quilted flannel lining. Triple-stitched main seams. This jacket works as hard as you do — and it looks good doing it.
+    </p>
+  </div>
+</div>
+
+<script>
+const STP = JSON.parse(document.getElementById('stp-meta').textContent);
+let selectedVariant = null;
+let cartItems = [];
+let currentStep = 0;
+const startTime = Date.now();
+
+function ts() {
+  const d = Date.now() - startTime;
+  return String(d).padStart(8,'0').replace(/(\d{2})(\d{2})(\d{3})/, '$1:$2:$3');
+}
+
+function addLog(type, msg) {
+  const log = document.getElementById('ao-log');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-time">${ts()}</span><span class="log-${type}">[${type.toUpperCase()}]</span> <span class="log-${type === 'agent' ? 'info' : type}">${msg}</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function showResponse(data) {
+  document.getElementById('ao-response-json').textContent = JSON.stringify(data, null, 2);
+}
+
+function updateFlow(step) {
+  currentStep = step;
+  const steps = STP.agent_hints.recommended_flow;
+  document.getElementById('ao-flow').innerHTML = steps.map((s,i) => `
+    <div class="flow-step">
+      <div class="flow-num ${i < step ? 'done' : i === step ? 'active' : ''}">${i < step ? '✓' : i+1}</div>
+      <span style="color:${i < step ? 'var(--green)' : i === step ? 'var(--accent)' : 'var(--muted)'}; font-size:10px">${s}</span>
+      ${i < steps.length-1 ? '<span class="flow-arrow">→</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function updateCart() {
+  const cart = document.getElementById('ao-cart');
+  if (cartItems.length === 0) {
+    cart.innerHTML = '<div style="font-size:10px;color:var(--dim)">EMPTY</div>';
+    return;
+  }
+  const total = cartItems.reduce((a,i) => a + i.price, 0);
+  cart.innerHTML = `
+    ${cartItems.map(item => `
+      <div class="cart-item">
+        <span style="color:#8888a8">${item.name}</span>
+        <span style="color:var(--accent)">$${item.price.toFixed(2)}</span>
+      </div>
+    `).join('')}
+    <div class="cart-total"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
+  `;
+}
+
+// Simulate API calls
+async function executeAction(action) {
+  const card = document.getElementById(`action-${action.id}`);
+  card.className = 'action-card executing';
+
+  addLog('action', `→ ${action.id} · ${action.method} ${action.endpoint}`);
+
+  // Check variant selected for actions that need it
+  if (action.required_params.includes('variant_id') && !selectedVariant) {
+    card.className = 'action-card error';
+    addLog('error', `✗ ${action.id} failed: variant_id required. Select a variant first.`);
+    showResponse({ error: 'variant_id required', hint: 'Call act_select_variant first' });
+    setTimeout(()=>{ card.className = 'action-card'; }, 2000);
+    return;
+  }
+
+  await new Promise(r => setTimeout(r, 600 + Math.random()*400));
+
+  let response = {};
+
+  if (action.id === 'act_select_variant') {
+    if (!selectedVariant) {
+      addLog('error', '✗ No variant selected in UI');
+      card.className = 'action-card error';
+      setTimeout(()=>{card.className='action-card'},2000);
+      return;
+    }
+    response = {
+      status: 'ok',
+      variant_confirmation: {
+        variant_id: selectedVariant.id,
+        label: selectedVariant.label,
+        in_stock: true,
+        price: STP.product.price.amount
+      }
+    };
+    updateFlow(1);
+  }
+
+  else if (action.id === 'act_add_to_cart') {
+    cartItems.push({
+      name: `${STP.product.name} · ${selectedVariant.label}`,
+      price: STP.product.price.amount,
+      product_id: STP.product.id,
+      variant_id: selectedVariant.id
+    });
+    response = {
+      status: 'ok',
+      cart_state: {
+        item_count: cartItems.length,
+        items: cartItems,
+        subtotal: cartItems.reduce((a,i)=>a+i.price,0),
+        currency: 'USD'
+      }
+    };
+    updateCart();
+    updateFlow(2);
+  }
+
+  else if (action.id === 'act_buy_now') {
+    response = {
+      status: 'ok',
+      checkout_session: {
+        session_id: 'sess_' + Math.random().toString(36).slice(2,10),
+        product_id: STP.product.id,
+        variant_id: selectedVariant.id,
+        amount: STP.product.price.amount,
+        expires_at: new Date(Date.now() + 1800000).toISOString()
+      }
+    };
+    updateFlow(2);
+  }
+
+  else if (action.id === 'act_get_cart') {
+    response = {
+      status: 'ok',
+      cart_state: {
+        item_count: cartItems.length,
+        items: cartItems,
+        subtotal: cartItems.reduce((a,i)=>a+i.price,0),
+        currency: 'USD'
+      }
+    };
+  }
+
+  else if (action.id === 'act_checkout') {
+    if (cartItems.length === 0) {
+      response = { status: 'error', message: 'Cart is empty' };
+      card.className = 'action-card error';
+      addLog('error', '✗ Checkout failed: cart empty');
+      showResponse(response);
+      setTimeout(()=>{card.className='action-card'},2000);
+      return;
+    }
+    response = {
+      status: 'ok',
+      order_confirmation: {
+        order_id: 'ord_' + Math.random().toString(36).slice(2,10).toUpperCase(),
+        items: cartItems,
+        total: cartItems.reduce((a,i)=>a+i.price,0),
+        currency: 'USD',
+        estimated_delivery: '3-5 business days',
+        confirmation_sent_to: 'agent_wallet'
+      }
+    };
+    cartItems = [];
+    updateCart();
+    updateFlow(3);
+  }
+
+  card.className = 'action-card done';
+  addLog('success', `✓ ${action.id} → ${action.returns}`);
+  showResponse(response);
+  setTimeout(()=>{ card.className = 'action-card'; }, 2500);
+}
+
+function activateAgent() {
+  const overlay = document.getElementById('agent-overlay');
+  overlay.classList.add('active');
+  selectedVariant = null;
+  updateFlow(0);
+
+  // Render product summary
+  const p = STP.product;
+  document.getElementById('ao-product').innerHTML = `
+    <div class="prod-name">${p.name}</div>
+    <div class="prod-price">$${p.price.amount}</div>
+    <div class="prod-stat">
+      <span class="in-stock">● IN STOCK</span>
+      <span style="color:var(--muted)">★ ${p.rating} (${p.review_count})</span>
+    </div>
+    <div style="font-size:9px;color:var(--muted)">DOMAIN: ${p.category}</div>
+    <div class="prod-concepts">
+      ${STP.summary.concepts.map(c=>`<div class="concept-chip">${c.ref} <span style="opacity:0.5">${Math.round(c.weight*100)}%</span></div>`).join('')}
+    </div>
+  `;
+
+  // Render variants
+  document.getElementById('ao-variants').innerHTML = p.variants.map(v => `
+    <div class="variant-item ${v.in_stock ? 'available' : 'out'}" 
+         id="variant-${v.id}"
+         onclick="${v.in_stock ? `selectVariant('${v.id}','${v.label}')` : ''}">
+      <span class="v-label">${v.label}</span>
+      <span class="v-badge ${v.in_stock ? 'v-in' : 'v-out'}">${v.in_stock ? 'IN' : 'OUT'}</span>
+    </div>
+  `).join('');
+
+  // Render actions
+  document.getElementById('ao-actions').innerHTML = STP.actions.map(a => `
+    <div class="action-card" id="action-${a.id}" onclick="executeAction(${JSON.stringify(a).replace(/"/g,'&quot;')})">
+      <div class="ac-top">
+        <span class="ac-id">${a.id}</span>
+        <span class="ac-method">${a.method}</span>
+      </div>
+      <div class="ac-label">${a.label}</div>
+      <div class="ac-endpoint">${a.endpoint}</div>
+      <div class="ac-params">
+        ${a.required_params.map(p=>`<span class="param-chip required">${p}</span>`).join('')}
+        ${a.optional_params.map(p=>`<span class="param-chip">${p}?</span>`).join('')}
+      </div>
+      <button class="exec-btn">▶ EXECUTE</button>
+    </div>
+  `).join('');
+
+  updateCart();
+}
+
+function selectVariant(id, label) {
+  selectedVariant = { id, label };
+  document.querySelectorAll('.variant-item.available').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`variant-${id}`).classList.add('selected');
+  addLog('agent', `Variant selected: ${label} (${id})`);
+  updateFlow(0);
+}
+
+function closeAgent() {
+  document.getElementById('agent-overlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAgent();
+});
+</script>
+</body>
+</html>
