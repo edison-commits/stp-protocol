@@ -85,13 +85,13 @@ Interactive demos — 12 artifacts, all runnable in browser:
 
 ## Concept Registry
 
-The canonical namespace for STP concept IDs lives in [`registry/`](registry/).
+The canonical namespace for STP concept IDs lives in its own dedicated repo: **[stp-registry](https://github.com/edison-commits/stp-registry)**
 
 Every STP block references concepts by stable ID: `stp:ai.ml.006`, `stp:ai.agents.004`, etc. The registry is what makes those IDs mean the same thing everywhere.
 
 **20 seed concepts across 6 domains** — `ai.ml`, `ai.agents`, `ai.search`, `data.graph`, `systems.network`, `physics.quantum`
 
-→ [Browse the registry](registry/) · [Contribute a concept](registry/README.md)
+→ [Browse the registry](https://github.com/edison-commits/stp-registry) · [Contribute a concept](https://github.com/edison-commits/stp-registry/blob/main/CONTRIBUTING.md)
 
 ---
 
