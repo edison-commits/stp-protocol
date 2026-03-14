@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://semanticweb.dev/sitemap.xml

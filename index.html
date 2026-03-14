@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STP — Semantic Transfer Protocol</title>
+<meta name="description" content="A machine-native protocol for structured semantic communication between AI agents. 39× fewer tokens than RAG. 21.8× faster than browser automation.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="STP — Semantic Transfer Protocol">
+<meta name="twitter:description" content="The web was built for humans. STP is the semantic layer built for agents.">
+<meta name="twitter:image" content="https://semanticweb.dev/og-stp.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="semanticweb.dev">
+<meta property="og:title" content="STP — Semantic Transfer Protocol">
+<meta property="og:description" content="The web was built for humans. STP is the semantic layer built for agents.">
+<meta property="og:url" content="https://semanticweb.dev/">
+<meta property="og:image" content="https://semanticweb.dev/og-stp.svg">
+<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image:alt" content="STP — Semantic Transfer Protocol">
+<link rel="canonical" href="https://semanticweb.dev/">
+<link rel="alternate" type="application/stp+json" href="https://semanticweb.dev/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "STP — Semantic Transfer Protocol",
+  "url": "https://semanticweb.dev/",
+  "description": "A machine-native protocol for structured semantic communication between AI agents.",
+  "sameAs": [
+    "https://github.com/edison-commits/stp-protocol",
+    "https://blog.idiotic.solutions/"
+  ]
+}
+</script>
+<script type="application/stp+json">
+{
+  "stp": "0.1",
+  "kind": "protocol_landing_page",
+  "canonical": "https://semanticweb.dev/",
+  "title": "STP — Semantic Transfer Protocol",
+  "summary": "A machine-native protocol for structured semantic communication between AI agents.",
+  "concepts": [
+    { "id": "stp:protocol", "ref": "semantic_transfer_protocol", "weight": 1.0 },
+    { "id": "stp:web", "ref": "machine_readable_web", "weight": 0.93 },
+    { "id": "stp:agents", "ref": "ai_agent", "weight": 0.97 },
+    { "id": "stp:reading", "ref": "structured_semantic_reading", "weight": 0.94 },
+    { "id": "stp:actions", "ref": "structured_action_layer", "weight": 0.88 },
+    { "id": "stp:a2a", "ref": "agent_to_agent_protocol", "weight": 0.84 },
+    { "id": "stp:benchmark", "ref": "token_and_latency_benchmark", "weight": 0.9 }
+  ],
+  "relations": [
+    {
+      "from": "stp:protocol",
+      "to": "stp:web",
+      "type": "defines",
+      "confidence": 0.98,
+      "provenance": "https://semanticweb.dev/"
+    },
+    {
+      "from": "stp:protocol",
+      "to": "stp:agents",
+      "type": "enables",
+      "confidence": 0.96,
+      "provenance": "https://semanticweb.dev/"
+    },
+    {
+      "from": "stp:reading",
+      "to": "stp:actions",
+      "type": "precedes",
+      "confidence": 0.89,
+      "provenance": "https://semanticweb.dev/#architecture"
+    },
+    {
+      "from": "stp:actions",
+      "to": "stp:a2a",
+      "type": "precedes",
+      "confidence": 0.85,
+      "provenance": "https://semanticweb.dev/#architecture"
+    },
+    {
+      "from": "stp:protocol",
+      "to": "stp:benchmark",
+      "type": "supported_by",
+      "confidence": 0.91,
+      "provenance": "https://semanticweb.dev/#numbers"
+    }
+  ],
+  "resources": [
+    {
+      "label": "Specification",
+      "url": "https://github.com/edison-commits/stp-protocol/blob/main/spec/STP-0.1.md"
+    },
+    {
+      "label": "Prototypes",
+      "url": "https://github.com/edison-commits/stp-protocol/tree/main/prototypes"
+    },
+    {
+      "label": "Development log",
+      "url": "https://blog.idiotic.solutions/"
+    }
+  ],
+  "benchmarks": {
+    "tokens_vs_rag": 39,
+    "speed_vs_browser_automation": 21.8,
+    "compression_vs_raw_html": 112.5
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060a;--surface:#08080f;--surface2:#0c0c16;
+  --border:#111118;--border2:#1a1a28;
+  --text:#5a5a8a;--bright:#c8c8e0;--muted:#252535;--dim:#383858;
+  --green:#34d399;--red:#f43f5e;--blue:#60a5fa;--purple:#a78bfa;
+  --orange:#fb923c;--yellow:#fbbf24;--teal:#2dd4bf;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(6,6,10,0.95);backdrop-filter:blur(16px)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--bright);letter-spacing:0.2em}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-links a{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.08em;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.nav-links a:hover{color:var(--bright);border-color:var(--border2)}
+.nav-cta{color:var(--green)!important;border-color:rgba(52,211,153,0.25)!important;background:rgba(52,211,153,0.05)!important}
+.nav-cta:hover{background:rgba(52,211,153,0.1)!important}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(ellipse,rgba(96,165,250,0.05) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(167,139,250,0.04) 0%,transparent 65%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.12em;color:var(--blue);border:1px solid rgba(96,165,250,0.2);background:rgba(96,165,250,0.05);padding:6px 18px;border-radius:20px;margin-bottom:32px}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-family:'Syne',sans-serif;font-size:clamp(38px,6vw,76px);font-weight:800;color:var(--bright);line-height:1.05;letter-spacing:-.025em;margin-bottom:24px;max-width:840px}
+h1 em{font-style:normal;color:var(--blue)}
+.hero-sub{font-size:18px;font-weight:400;color:var(--text);max-width:520px;line-height:1.75;margin-bottom:48px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:72px}
+.btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;padding:12px 26px;border-radius:5px;text-decoration:none;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--blue);color:#06060a;border:1px solid var(--blue)}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--bright);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:rgba(200,200,224,.3);background:rgba(200,200,224,.04)}
+.btn-green{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.25)}
+.btn-green:hover{background:rgba(52,211,153,.15)}
+
+/* STAT BAR */
+.stat-bar{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface);max-width:720px;width:100%}
+.stat-item{flex:1;padding:22px 24px;text-align:center;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;display:block;margin-bottom:6px}
+.stat-lbl{font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--dim);display:block}
+
+/* SECTION */
+.section{max-width:960px;margin:0 auto;padding:88px 24px}
+.sec-tag{font-size:11px;font-weight:600;letter-spacing:.15em;color:var(--dim);margin-bottom:14px}
+h2{font-family:'Syne',sans-serif;font-size:clamp(26px,3vw,40px);font-weight:800;color:var(--bright);margin-bottom:16px;line-height:1.15}
+.lead{font-size:17px;color:var(--text);max-width:600px;line-height:1.8;margin-bottom:40px}
+hr{border:none;border-top:1px solid var(--border)}
+
+/* PROBLEM GRID */
+.prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:40px}
+.prob-card{background:var(--surface);padding:24px}
+.prob-tag{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--red);margin-bottom:10px}
+.prob-title{font-size:15px;font-weight:700;color:var(--bright);margin-bottom:8px}
+.prob-body{font-size:14px;color:var(--text);line-height:1.7}
+
+/* CODE BLOCK */
+.code-wrap{background:#030306;border:1px solid var(--border);border-radius:6px;padding:24px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.75;overflow-x:auto;margin-bottom:16px}
+.ck{color:var(--blue)}.cs{color:var(--green)}.cn{color:var(--orange)}.ct{color:var(--purple)}.cc{color:var(--dim)}
+
+/* LAYERS */
+.layers{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.layer{display:flex;align-items:flex-start;gap:20px;padding:24px 28px;background:var(--surface);border-left:3px solid transparent;transition:background .2s}
+.layer:hover{background:var(--bg)}
+.l1{border-left-color:var(--green)}.l2{border-left-color:var(--blue)}.l3{border-left-color:var(--purple)}
+.layer-num{font-size:11px;font-weight:600;color:var(--dim);min-width:28px;margin-top:3px}
+.layer-body{flex:1}
+.layer-title{font-size:16px;font-weight:700;color:var(--bright);margin-bottom:6px}
+.layer-desc{font-size:14px;color:var(--text);line-height:1.7}
+.badge{font-size:11px;font-weight:500;letter-spacing:.06em;padding:4px 10px;border-radius:3px;white-space:nowrap;margin-top:2px;align-self:flex-start}
+.badge-active{background:rgba(52,211,153,.08);color:var(--green);border:1px solid rgba(52,211,153,.2)}
+.badge-spec{background:rgba(96,165,250,.08);color:var(--blue);border:1px solid rgba(96,165,250,.2)}
+.badge-proto{background:rgba(42,42,66,.5);color:var(--dim);border:1px solid var(--border2)}
+
+/* NUMBERS */
+.num-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.num-table th{background:var(--surface);padding:12px 18px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--dim);border-bottom:1px solid var(--border)}
+.num-table td{padding:14px 18px;font-size:14px;border-bottom:1px solid var(--border);background:var(--bg);color:var(--text)}
+.num-table tr:last-child td{border-bottom:none}
+.hl{color:var(--green)!important;font-weight:700}
+.row-hl td{background:rgba(52,211,153,.025)!important}
+.note{font-size:13px;color:var(--dim)}
+
+/* PROTOTYPES GRID */
+.proto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.proto-card{background:var(--surface);padding:24px;transition:background .2s;cursor:default}
+.proto-card:hover{background:var(--surface2)}
+.proto-num{font-size:11px;font-weight:500;color:var(--dim);margin-bottom:10px}
+.proto-name{font-size:15px;font-weight:700;color:var(--bright);margin-bottom:8px}
+.proto-desc{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.proto-stat{font-size:11px;font-weight:500;color:var(--blue);letter-spacing:.06em}
+
+/* BLOG */
+.blog-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.blog-item{display:flex;align-items:center;gap:20px;padding:18px 24px;background:var(--surface);border-left:3px solid var(--border2);text-decoration:none;transition:all .2s}
+.blog-item:hover{background:var(--bg);border-left-color:var(--blue)}
+.blog-num{font-size:12px;font-weight:500;color:var(--dim);min-width:22px}
+.blog-title{font-size:15px;font-weight:600;color:var(--bright);flex:1}
+.blog-excerpt{font-size:13px;color:var(--text);margin-top:4px}
+.blog-arrow{font-size:14px;color:var(--dim)}
+
+/* QUOTE */
+blockquote{border-left:3px solid var(--blue);padding:18px 26px;background:rgba(96,165,250,.04);border-radius:0 6px 6px 0;margin:36px 0}
+blockquote p{font-size:17px;color:var(--bright);line-height:1.7;font-style:italic}
+
+/* CTA SECTION */
+.cta-block{text-align:center;border:1px solid var(--border);border-radius:10px;padding:64px 40px;background:var(--surface);max-width:960px;margin:0 auto 100px;position:relative;overflow:hidden}
+.cta-block::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:400px;height:200px;background:radial-gradient(ellipse,rgba(96,165,250,.06) 0%,transparent 70%);pointer-events:none}
+
+/* TIMELINE SECTION */
+.timeline{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tl-item{display:flex;gap:20px;padding:20px 26px;background:var(--surface);border-left:3px solid var(--border2)}
+.tl-item.milestone{border-left-color:var(--green)}
+.tl-item.challenge{border-left-color:var(--red)}
+.tl-item.shift{border-left-color:var(--yellow)}
+.tl-date{font-size:12px;font-weight:600;color:var(--blue);min-width:64px;margin-top:2px}
+.tl-body{flex:1}
+.tl-title{font-size:14px;font-weight:700;color:var(--bright);margin-bottom:4px}
+.tl-text{font-size:14px;color:var(--text);line-height:1.65}
+.tl-delta{font-size:12px;margin-left:4px}
+.up{color:var(--green)}.dn{color:var(--red)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer span{font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--dim)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{color:var(--text);text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.06em;transition:color .2s}
+.footer-links a:hover{color:var(--bright)}
+
+@media(max-width:640px){
+  .stat-bar{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border)}
+  nav{padding:12px 16px}
+  .nav-links a{padding:5px 8px;font-size:11px}
+  .proto-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">STP</div>
+  <div class="nav-links">
+    <a href="#problem">PROBLEM</a>
+    <a href="#how">SPEC</a>
+    <a href="#numbers">NUMBERS</a>
+    <a href="#start">START</a>
+    <a href="#prototypes">PROTOTYPES</a>
+    <a href="#blog">BLOG</a>
+    <a href="https://github.com/edison-commits/stp-protocol" target="_blank" class="nav-cta">GITHUB →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-badge"><div class="pulse"></div>STP/0.1 — DRAFT — ACTIVE DEVELOPMENT</div>
+  <h1>The web was built<br>for <em>humans</em>.</h1>
+  <p class="hero-sub">AI agents still read the web through presentation layers built for people. STP gives them a machine-native semantic layer: structured meaning at the same URL, without rebuilding understanding from scratch.</p>
+  <div class="ctas">
+    <a href="https://github.com/edison-commits/stp-protocol" target="_blank" class="btn btn-primary">READ THE SPEC</a>
+    <a href="#prototypes" class="btn btn-ghost">SEE THE PROTOTYPES</a>
+    <a href="https://blog.idiotic.solutions" target="_blank" class="btn btn-green">READ THE BUILD LOG</a>
+  </div>
+  <div class="stat-bar">
+    <div class="stat-item"><span class="stat-num" style="color:var(--green)">39×</span><span class="stat-lbl">FEWER TOKENS THAN RAG</span></div>
+    <div class="stat-item"><span class="stat-num" style="color:var(--orange)">21.8×</span><span class="stat-lbl">FASTER THAN BROWSER AUTOMATION</span></div>
+    <div class="stat-item"><span class="stat-num" style="color:var(--purple)">112×</span><span class="stat-lbl">COMPRESSION VS RAW HTML</span></div>
+  </div>
+</div>
+
+<hr>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="sec-tag">01 — THE PROBLEM</div>
+  <h2>Current workarounds<br>burn time and tokens.</h2>
+  <p class="lead">The modern web was designed for people. When an agent reads a webpage, it reverse-engineers meaning from layout, markup, and copy that were never designed as a semantic interface. The waste is structural.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <div class="prob-tag">HTML PARSING</div>
+      <div class="prob-title">Brittle by design</div>
+      <div class="prob-body">Breaks on redesigns. Can't infer semantic relationships — only structure. One CSS change breaks the agent.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-tag">LLM COMPREHENSION</div>
+      <div class="prob-title">Token-heavy</div>
+      <div class="prob-body">A 4,000-word article becomes ~40 semantic facts — after burning the full token budget to get there.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-tag">JSON-LD / SCHEMA.ORG</div>
+      <div class="prob-title">Not relational</div>
+      <div class="prob-body">Describes what a page <em>is</em> for search snippets. Not what it <em>means</em> relationally. No confidence. No provenance.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-tag">RAG PIPELINES</div>
+      <div class="prob-title">Structural waste</div>
+      <div class="prob-body">Every agent independently rebuilds the same semantic graph from the same source. The waste compounds at scale.</div>
+    </div>
+  </div>
+  <blockquote><p>"The web was built for humans. Search engines retrofitted machine readability on top. STP asks a different question: what if we designed the data layer for agents first, and let humans have a translation on request?"</p></blockquote>
+</section>
+
+<hr>
+
+<section class="section" id="start">
+  <div class="sec-tag">02A — START HERE</div>
+  <h2>Three paths.<br>One protocol.</h2>
+  <p class="lead">If STP is interesting, the next question is always the same: where do I start? Pick the shortest path based on what you want to prove first.</p>
+  <div class="prob-grid" style="margin-bottom:0">
+    <div class="prob-card">
+      <div class="prob-tag">PUBLISHERS</div>
+      <div class="prob-title">Publish a first block</div>
+      <div class="prob-body">Read the spec, generate a block, validate it, and embed it in a single page. No new infrastructure required.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-tag">AGENT BUILDERS</div>
+      <div class="prob-title">Read STP before the DOM</div>
+      <div class="prob-body">Treat STP as the fast path. If the block exists, consume it first. If not, fall back cleanly to HTML parsing.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-tag">RESEARCHERS</div>
+      <div class="prob-title">Inspect the evidence</div>
+      <div class="prob-body">Start with the working paper, benchmarks, and prototypes. The claims only matter if you can inspect them.</div>
+    </div>
+  </div>
+  <div class="ctas" style="justify-content:flex-start;margin:28px 0 0">
+    <a href="https://github.com/edison-commits/stp-protocol/blob/main/spec/STP-0.1.md" target="_blank" class="btn btn-primary">READ THE SPEC</a>
+    <a href="https://github.com/edison-commits/stp-protocol/tree/main/prototypes" target="_blank" class="btn btn-ghost">SEE THE PROTOTYPES</a>
+    <a href="https://blog.idiotic.solutions/stp-working-paper-full-protocol-specification-v0-1/" target="_blank" class="btn btn-green">WORKING PAPER</a>
+  </div>
+</section>
+
+<hr>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="sec-tag">02 — HOW IT WORKS</div>
+  <h2>Same URL. Two audiences.<br>No new infrastructure.</h2>
+  <p class="lead">STP embeds a structured semantic block inside any webpage via a script tag. Browsers skip it. Agents parse it and skip the DOM entirely. Where HTML communicates <em>presentation</em> and JSON communicates <em>data</em>, STP communicates meaning.</p>
+  <div class="code-wrap"><span class="cc">// Any webpage. Browsers ignore this. Agents read only this.</span>
+&lt;script type=<span class="cs">"application/stp+json"</span>&gt;
+{
+  <span class="ck">"stp"</span>: <span class="cs">"0.1"</span>,
+  <span class="ck">"concepts"</span>: [
+    { <span class="ck">"id"</span>: <span class="cs">"stp:ai.ml.006"</span>, <span class="ck">"ref"</span>: <span class="cs">"large_language_model"</span>, <span class="ck">"weight"</span>: <span class="cn">1.0</span> },
+    { <span class="ck">"id"</span>: <span class="cs">"stp:ai.ml.009"</span>, <span class="ck">"ref"</span>: <span class="cs">"training_data"</span>, <span class="ck">"weight"</span>: <span class="cn">0.8</span> }
+  ],
+  <span class="ck">"relations"</span>: [
+    {
+      <span class="ck">"from"</span>: <span class="cs">"stp:ai.ml.006"</span>,
+      <span class="ck">"to"</span>: <span class="cs">"stp:ai.ml.009"</span>,
+      <span class="ck">"type"</span>: <span class="ct">"requires"</span>,
+      <span class="ck">"confidence"</span>: <span class="cn">0.85</span>,
+      <span class="ck">"provenance"</span>: <span class="cs">"https://arxiv.org/abs/2005.14165"</span>
+    }
+  ]
+}
+&lt;/script&gt;</div>
+  <p style="font-size:14px;color:var(--dim);line-height:1.7">8 relation types. Canonical concept IDs. Confidence scores with provenance chains. Designed to degrade gracefully — pages without STP fall back to HTML parsing. Pages with STP are just <strong style="color:var(--bright)">faster, cheaper, and structurally richer</strong> to consume.</p>
+</section>
+
+<hr>
+
+<!-- ARCHITECTURE -->
+<section class="section" id="layers">
+  <div class="sec-tag">03 — ARCHITECTURE</div>
+  <h2>Three layers.<br>Independently adoptable.</h2>
+  <p class="lead">Each layer is safe to ship without the next. The reading layer is inherently safe — nothing executes. The action layer requires a complete security specification first. The A2A protocol can only follow.</p>
+  <div class="layers">
+    <div class="layer l1">
+      <div class="layer-num">L1</div>
+      <div class="layer-body">
+        <div class="layer-title">Reading Layer</div>
+        <div class="layer-desc">Agents read structured semantic data from webpages. Concept Registry (23 concepts, 6 domains), 8 typed relation types, confidence propagation with hop decay and cross-domain penalties, deterministic conflict resolution engine. Inherently safe.</div>
+      </div>
+      <div class="badge badge-active">IN DEVELOPMENT</div>
+    </div>
+    <div class="layer l2">
+      <div class="layer-num">L2</div>
+      <div class="layer-body">
+        <div class="layer-title">Action Layer</div>
+        <div class="layer-desc">Agents execute structured operations via action manifests declared in STP blocks. Direct API calls — no browser, no DOM, no selector breaks. 5-step security pipeline: signature verify → injection scan → domain allowlist → scope check → human gate.</div>
+      </div>
+      <div class="badge badge-spec">SECURITY SPEC COMPLETE</div>
+    </div>
+    <div class="layer l3">
+      <div class="layer-num">L3</div>
+      <div class="layer-body">
+        <div class="layer-title">Agent-to-Agent Protocol</div>
+        <div class="layer-desc">Agents communicate directly via typed STP packets — zero natural language. 8 message types: QUERY, ASSERT, CHALLENGE, RESOLVE, DELEGATE, ACK, REJECT, COMPLETE. 2.7× compression vs natural language coordination.</div>
+      </div>
+      <div class="badge badge-proto">PROTOTYPE</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- NUMBERS -->
+<section class="section" id="numbers">
+  <div class="sec-tag">04 — THE NUMBERS</div>
+  <h2>Measured honestly.</h2>
+  <p class="lead">The RAG comparison is the most practically important — it's what agents actually use today for web reading. The 39× number is robust even with minimal STP blocks because typed structure is categorically richer than prose fragments.</p>
+  <table class="num-table">
+    <thead><tr><th>COMPARISON</th><th>SAVINGS</th><th>NOTE</th></tr></thead>
+    <tbody>
+      <tr><td>STP vs raw HTML</td><td>161×</td><td class="note">Real but not the fair comparison</td></tr>
+      <tr><td>STP vs stripped text</td><td>48×</td><td class="note">Assumes well-authored STP block</td></tr>
+      <tr class="row-hl"><td>STP vs RAG (5×512 chunks)</td><td class="hl">39× — and more structured</td><td class="note">Use this number.</td></tr>
+    </tbody>
+  </table>
+  <table class="num-table">
+    <thead><tr><th>MODEL</th><th>CONVENTIONAL (PAGES / CTX)</th><th>STP (PAGES / CTX)</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Sonnet 200K</td><td style="color:var(--text)">53 pages</td><td class="hl">2,545 pages</td></tr>
+      <tr><td>Gemini 1.5 Pro 1M</td><td style="color:var(--text)">264 pages</td><td class="hl">12,723 pages</td></tr>
+    </tbody>
+  </table>
+  <table class="num-table">
+    <thead><tr><th>BENCHMARK</th><th>CONVENTIONAL</th><th>STP</th><th>IMPROVEMENT</th></tr></thead>
+    <tbody>
+      <tr><td>Task completion time</td><td>9.27s</td><td>0.42s</td><td class="hl">21.8× faster</td></tr>
+      <tr><td>Bytes processed</td><td>102KB HTML</td><td>892 bytes</td><td class="hl">116× less</td></tr>
+      <tr><td>LLM calls required</td><td>1</td><td>0</td><td class="hl">Eliminated</td></tr>
+      <tr><td>Selector breaks</td><td>1 (CSS → XPath retry)</td><td>0</td><td class="hl">None possible</td></tr>
+      <tr><td>Crawler compression</td><td>288KB HTML</td><td>2,620 bytes STP</td><td class="hl">112.5×</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:14px;color:var(--dim);line-height:1.75;margin-top:16px">Honest caveat: 48× assumes a well-authored STP block. Real-world numbers in early adoption are probably 20–35× vs extracted text, climbing toward 48× as tooling matures. $9/day saved at 1,000 pages/day at current Claude Sonnet pricing. $928/day at crawler scale (100K pages).</p>
+</section>
+
+<hr>
+
+<!-- TEMPORAL -->
+<section class="section" id="temporal">
+  <div class="sec-tag">05 — THE TEMPORAL LAYER</div>
+  <h2>Static knowledge is easy.<br>STP tracks how it changes.</h2>
+  <p class="lead">An agent reading an ML paper from 2023 needs to know that the field's confidence in that claim has since dropped. A static knowledge graph gives it the claim. STP's temporal layer gives it the claim, its current standing, and the event that caused the revision.</p>
+  <div class="timeline">
+    <div class="tl-item milestone">
+      <div class="tl-date">Jan 2022</div>
+      <div class="tl-body">
+        <div class="tl-title">Pre-ChatGPT Era</div>
+        <div class="tl-text">Transformer <span class="tl-delta up">97</span> · Attention <span class="tl-delta up">96</span> · LLM <span class="tl-delta">71</span> · Agent <span class="tl-delta dn">38</span> · Tool Use <span class="tl-delta dn">21</span>. Architecture is understood. Applications unclear.</div>
+      </div>
+    </div>
+    <div class="tl-item milestone">
+      <div class="tl-date">Dec 2022</div>
+      <div class="tl-body">
+        <div class="tl-title">ChatGPT Changes Everything</div>
+        <div class="tl-text">LLM confidence spikes. Everything connected follows. The graph restructures around a new center of gravity. Agent begins its long climb.</div>
+      </div>
+    </div>
+    <div class="tl-item challenge">
+      <div class="tl-date">Jul 2023</div>
+      <div class="tl-body">
+        <div class="tl-title">Emergent Behavior Gets Challenged</div>
+        <div class="tl-text">Papers question whether emergence is real or an evaluation artifact. Emergent Behavior confidence drops <span class="tl-delta dn">−12</span>. The <code>LLM causes EmergentBehavior</code> relation weakens and changes type to <code>relates_to</code>.</div>
+      </div>
+    </div>
+    <div class="tl-item shift">
+      <div class="tl-date">Apr 2024</div>
+      <div class="tl-body">
+        <div class="tl-title">Reasoning Models Emerge</div>
+        <div class="tl-text">The field starts treating reasoning as a separable capability, not just an emergent property of scale. Reasoning gets its own node and begins climbing toward 99.</div>
+      </div>
+    </div>
+    <div class="tl-item milestone">
+      <div class="tl-date">Oct 2024</div>
+      <div class="tl-body">
+        <div class="tl-title">Agentic Frameworks Mature</div>
+        <div class="tl-text">Tool Use climbs from 21 → 96. Agent follows. Edges between Agent, Tool Use, and Reasoning tighten. The graph reorganizes for the second time.</div>
+      </div>
+    </div>
+    <div class="tl-item milestone">
+      <div class="tl-date">Mar 2026</div>
+      <div class="tl-body">
+        <div class="tl-title">STP Era Begins</div>
+        <div class="tl-text">Reasoning <span class="tl-delta up">99</span> · Agent <span class="tl-delta up">97</span> · Tool Use <span class="tl-delta up">96</span> · Emergent Behavior <span class="tl-delta dn">41</span>. The field moved on. The graph recorded it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- PROTOTYPES -->
+<section class="section" id="prototypes">
+  <div class="sec-tag">06 — PROTOTYPES</div>
+  <h2>12 working prototypes.<br>All open source.</h2>
+  <p class="lead">Every layer of STP is interactive and runnable. Not slides. Not mockups. Working code showing what the protocol actually does.</p>
+  <div class="proto-grid">
+    <div class="proto-card">
+      <div class="proto-num">01</div>
+      <div class="proto-name">Conflict Resolution Engine</div>
+      <div class="proto-desc">5-criteria deterministic pipeline for contradictory semantic claims. Confidence delta → domain authority → recency → source type → corroboration. UNRESOLVED when all five tie.</div>
+      <div class="proto-stat">4 LIVE TEST CASES</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">02</div>
+      <div class="proto-name">Security Specification</div>
+      <div class="proto-desc">8 identified threats (3 CRITICAL, avg CVSS 8.5). 9 mitigations. Phase-gated roadmap. Action layer cannot be built until Phase 0 mitigations are implemented.</div>
+      <div class="proto-stat">CVSS MAX 9.8 · 7 UNMITIGATED</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">03</div>
+      <div class="proto-name">Action Layer</div>
+      <div class="proto-desc">Live execution pipeline. Select an action, fill parameters, watch all 5 security checks run in sequence. Payment actions halt for human confirmation. No DOM. No browser.</div>
+      <div class="proto-stat">5-STEP SECURITY PIPELINE</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">04</div>
+      <div class="proto-name">Agent-to-Agent Protocol</div>
+      <div class="proto-desc">Zero natural language. Two agents negotiate via typed STP packets. QUERY → ASSERT → CHALLENGE → RESOLVE → COMPLETE. Watch the exchange happen in real time.</div>
+      <div class="proto-stat">2.7× COMPRESSION VS NL</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">05</div>
+      <div class="proto-name">Unified End-to-End Demo</div>
+      <div class="proto-desc">One agent. One task. Every layer firing in sequence. Registry → Confidence → Conflict → Security → Action → Human Gate → A2A → Complete. Human gate holds at payment until approved.</div>
+      <div class="proto-stat">8 STAGES · 3.6× COMPRESSION</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">06</div>
+      <div class="proto-name">Crawler Simulator</div>
+      <div class="proto-desc">8 pages. One crawler. Zero HTML parsed. Watch the knowledge graph assemble in real time as each page's STP block is read. 13 nodes. 22 edges. 2,620 bytes vs 288KB.</div>
+      <div class="proto-stat">112.5× COMPRESSION</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">07</div>
+      <div class="proto-name">Benchmark</div>
+      <div class="proto-desc">Side-by-side race. Conventional agent (browser + DOM + LLM call) vs STP agent (semantic block + direct API). Same task. The conventional agent hit a CSS selector break mid-run.</div>
+      <div class="proto-stat">21.8× FASTER · 0 SELECTOR BREAKS</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">08</div>
+      <div class="proto-name">STP Block Generator</div>
+      <div class="proto-desc">Paste any URL or article text. Claude extracts concepts, infers typed relations, assigns confidence scores calibrated to source type, outputs a deploy-ready STP block.</div>
+      <div class="proto-stat">30 SECONDS · BRING YOUR API KEY</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">09</div>
+      <div class="proto-name">Diff Engine</div>
+      <div class="proto-desc">Git for semantic graphs. Paste two versions of an STP block. Get a structured diff: concepts added/removed/modified, relations changed, confidence drift, agent cache invalidation recommendation.</div>
+      <div class="proto-stat">3 EXAMPLE SCENARIOS</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">10</div>
+      <div class="proto-name">Validator</div>
+      <div class="proto-desc">Schema errors, injection scan, signature check, registry compliance, confidence range warnings, relation consistency. Everything a developer needs before deploying an STP block to production.</div>
+      <div class="proto-stat">6 VALIDATION CHECKS</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">11</div>
+      <div class="proto-name">Temporal Graph</div>
+      <div class="proto-desc">The AI/ML knowledge graph animated month by month, 2022–2026. Watch concepts gain and lose confidence as papers publish. Watch relations appear, strengthen, weaken, and get overturned. Nobody built this before.</div>
+      <div class="proto-stat">48 MONTHS · 16 CONCEPTS · PLAY →</div>
+    </div>
+    <div class="proto-card">
+      <div class="proto-num">12</div>
+      <div class="proto-name">Concept Registry</div>
+      <div class="proto-desc">23 canonical concepts across 6 domains. Canonical IDs, aliases, domain weights, pre-defined relations. The shared vocabulary that makes STP blocks interoperable across sources.</div>
+      <div class="proto-stat">v1.0 · 6 DOMAINS</div>
+    </div>
+  </div>
+  <div style="margin-top:20px;text-align:center">
+    <a href="https://github.com/edison-commits/stp-protocol/tree/main/prototypes" target="_blank" class="btn btn-ghost" style="margin:0 auto">VIEW ALL ON GITHUB →</a>
+  </div>
+</section>
+
+<hr>
+
+<!-- BLOG -->
+<section class="section" id="blog">
+  <div class="sec-tag">07 — DEVELOPMENT LOG</div>
+  <h2>Building in public.</h2>
+  <p class="lead">Every milestone documented as it ships: the honest numbers, the caveats, and the security threats before the features.</p>
+  <div class="blog-list">
+    <a href="https://blog.idiotic.solutions/the-web-was-built-for-human-eyes-ai-agents-are-paying-the-price/" target="_blank" class="blog-item">
+      <div class="blog-num">01</div>
+      <div style="flex:1"><div class="blog-title">The Web Was Built for Human Eyes. AI Agents Are Paying the Price.</div><div class="blog-excerpt">The problem, the failed solutions, and what STP is.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/stp-conflict-resolution-engine-now-on-github/" target="_blank" class="blog-item">
+      <div class="blog-num">02</div>
+      <div style="flex:1"><div class="blog-title">STP Conflict Resolution Engine — Now on GitHub</div><div class="blog-excerpt">5-criteria pipeline. When all five tie, the protocol says so — and lets the agent decide.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/stp-security-specification-8-threats-9-mitigations-one-gate/" target="_blank" class="blog-item">
+      <div class="blog-num">03</div>
+      <div style="flex:1"><div class="blog-title">STP Security Specification: 8 Threats, 9 Mitigations, One Gate</div><div class="blog-excerpt">3 CRITICAL threats. Avg CVSS 8.5. Action layer doesn't exist until this is done.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/the-stp-action-layer-agents-that-act-without-a-browser/" target="_blank" class="blog-item">
+      <div class="blog-num">04</div>
+      <div style="flex:1"><div class="blog-title">The STP Action Layer: Agents That Act Without a Browser</div><div class="blog-excerpt">Sites publish what they can do. Agents call it directly. No DOM. No selector breaks.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/stp-layer-3-agent-to-agent-at-2-7x-compression/" target="_blank" class="blog-item">
+      <div class="blog-num">05</div>
+      <div style="flex:1"><div class="blog-title">STP Layer 3: Agent-to-Agent at 2.7× Compression</div><div class="blog-excerpt">847 tokens → 312 bytes. CONDITIONALLY_SUPPORTED. Zero natural language.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/stp-end-to-end-one-task-every-layer-3-6x-compression/" target="_blank" class="blog-item">
+      <div class="blog-num">06</div>
+      <div style="flex:1"><div class="blog-title">STP End-to-End: One Task, Every Layer, 3.6× Compression</div><div class="blog-excerpt">847 tokens. 4 API calls. 0 browser renders. Human gate held at $140.91 payment until approved.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/112-5x-compression-the-stp-crawler-simulator/" target="_blank" class="blog-item">
+      <div class="blog-num">07</div>
+      <div style="flex:1"><div class="blog-title">112.5× Compression: The STP Crawler Simulator</div><div class="blog-excerpt">8 pages. Zero HTML parsed. 13 nodes, 22 edges. The adoption argument made visual.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/21-8x-faster-stp-vs-conventional-agent-benchmark/" target="_blank" class="blog-item">
+      <div class="blog-num">08</div>
+      <div style="flex:1"><div class="blog-title">21.8× Faster: STP vs Conventional Agent Benchmark</div><div class="blog-excerpt">9.27s vs 0.42s. The conventional agent hit a CSS selector break. The STP agent has nothing to break.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/the-token-math-stp-vs-rag-stripped-text-and-raw-html/" target="_blank" class="blog-item">
+      <div class="blog-num">09</div>
+      <div style="flex:1"><div class="blog-title">The Token Math: STP vs RAG, Stripped Text, and Raw HTML</div><div class="blog-excerpt">39× vs RAG. 48× vs stripped text. The numbers, and the honest caveats.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/the-stp-block-generator-30-seconds-from-content-to-deployment/" target="_blank" class="blog-item">
+      <div class="blog-num">10</div>
+      <div style="flex:1"><div class="blog-title">The STP Block Generator: 30 Seconds from Content to Deployment</div><div class="blog-excerpt">Paste content. Claude extracts concepts and outputs a deploy-ready block. The adoption unlock.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/four-years-of-ai-ml-watched-in-30-seconds/" target="_blank" class="blog-item">
+      <div class="blog-num">11</div>
+      <div style="flex:1"><div class="blog-title">Four Years of AI/ML — Watched in 30 Seconds</div><div class="blog-excerpt">Temporal graph. Jan 2022 to Mar 2026. Agent climbs from 38 to 97. Emergent Behavior falls.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/the-stp-validator/" target="_blank" class="blog-item">
+      <div class="blog-num">12</div>
+      <div style="flex:1"><div class="blog-title">The STP Validator: 8 Checks Before a Bad Block Reaches an Agent</div><div class="blog-excerpt">Schema, injection scan, concept integrity, relation validity, signature — fully deterministic, no API call, under 10ms.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+    <a href="https://blog.idiotic.solutions/stp-working-paper-full-protocol-specification-v0-1/" target="_blank" class="blog-item" style="border-left-color:var(--purple)">
+      <div class="blog-num" style="color:var(--purple)">📄</div>
+      <div style="flex:1"><div class="blog-title">STP Working Paper — Full Protocol Specification, v0.1</div><div class="blog-excerpt">The complete formal spec. Six layers, threat model, token economics, benchmark methodology. Pre-publication draft.</div></div>
+      <div class="blog-arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<hr>
+
+<!-- CTA -->
+<div style="padding:80px 24px 0">
+  <div class="cta-block">
+    <div class="sec-tag" style="margin-bottom:16px">STP/0.1 — OPEN SPECIFICATION — MIT LICENSE</div>
+    <h2 style="margin-bottom:14px">The spec is public.<br>The prototypes run.<br>The paper trail is live.</h2>
+    <p style="font-size:16px;color:var(--text);max-width:500px;margin:0 auto 36px;line-height:1.75">12 interactive prototypes. Full security threat model. Benchmark vs conventional agents. 12 development posts + working paper. All open source from day one.</p>
+    <div class="ctas" style="margin-bottom:0">
+      <a href="https://github.com/edison-commits/stp-protocol" target="_blank" class="btn btn-primary">VIEW ON GITHUB →</a>
+      <a href="https://blog.idiotic.solutions" target="_blank" class="btn btn-ghost">READ THE BUILD LOG</a>
+      <a href="https://github.com/edison-commits/stp-protocol/blob/main/spec/STP-0.1.md" target="_blank" class="btn btn-green">READ THE SPEC</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>SEMANTIC TRANSFER PROTOCOL / STP/0.1 DRAFT / MARCH 2026</span>
+  <div class="footer-links">
+    <a href="https://github.com/edison-commits/stp-protocol" target="_blank">GITHUB</a>
+    <a href="https://blog.idiotic.solutions" target="_blank">BLOG</a>
+    <a href="https://github.com/edison-commits/stp-protocol/blob/main/spec/STP-0.1.md" target="_blank">SPEC</a>
+    <a href="https://github.com/edison-commits/stp-protocol/tree/main/prototypes" target="_blank">PROTOTYPES</a>
+  </div>
+</footer>
+
+</body>
+</html>
